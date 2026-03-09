@@ -33,6 +33,7 @@ Need to execute another protocol flow? Install that protocol’s folder (e.g., `
 | `defi/`         | Directory skill that triages DeFi intents and links to protocol sub-skills. | When a user simply says “do DeFi” or hasn’t picked a protocol yet.                   |
 | `defi/elytro/`  | Execution bridge from planner calldata/UserOps into Elytro smart accounts.  | Running Uniswap AI instructions, relaying calldata, simulating & sending tx/UserOps. |
 | `defi/uniswap/` | Uniswap AI planning prompts and guardrails.                                 | Swaps, LP adds/removes, Uniswap analytics before execution.                          |
+| `payroll/`      | Payroll runbook for Elytro smart accounts.                                  | Recurring ETH/USDC payouts with manual approval every pay period.                    |
 
 Add more folders under `defi/` (`defi/<protocol>/SKILL.md`) to extend the pack; the directory skill will automatically link to them once documented.
 
