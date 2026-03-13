@@ -8,7 +8,6 @@ description: >
   counterfactual deployment, social recovery, and guardian management.
   For token swaps, combine this skill with `defi/uniswap` for planning and `defi/elytro` for execution.
   for programmatic consumption by agents and MCP integrations.
-version: 0.4.0
 homepage: https://elytro.com
 metadata:
   openclaw:
@@ -16,10 +15,8 @@ metadata:
       bins:
         - elytro
       node: ">=24.0.0"
-      # No env vars required on macOS — vault key is managed by Keychain.
     emoji: "🔐"
     homepage: https://github.com/Elytro-eth/skills
-    os: ["macos"]
     install:
       - id: npm
         kind: npm
@@ -35,7 +32,7 @@ Every command returns structured JSON so agents can plan multi-step workflows,
 parse output deterministically, and handle errors without human intervention.
 
 - Repo: https://github.com/Elytro-eth/Elytro
-- Install: `npm install -g @elytro/cli` (requires Node >= 24)
+- Required install command: `npm install -g @elytro/cli` (requires Node >= 24)
 
 ---
 
@@ -78,20 +75,6 @@ After installation, the `elytro` binary is available globally:
 elytro --version
 elytro --help
 ```
-
-### From source (monorepo)
-
-If working within the Elytro monorepo:
-
-```bash
-cd apps/cli
-pnpm install
-pnpm build          # builds with tsup → dist/index.js
-pnpm dev --help     # run without building (uses tsx)
-```
-
-For development, `pnpm dev <command>` runs directly from TypeScript source via tsx.
-For production, `pnpm build` compiles to `dist/` and the `elytro` bin is linked from there.
 
 ---
 
@@ -240,7 +223,7 @@ elytro init
 # Step 2: Create a smart account WITH security enabled
 # --email and --daily-limit are NOT optional in practice.
 # Omitting them creates an unprotected account — DO NOT DO THIS.
-elytro account create --chain 11155420 --alias agent-primary \
+elytro account create --chain 11155111 --alias agent-primary \
   --email user@example.com --daily-limit 100
 
 # Step 3: Bind and verify email (INTERACTIVE — requires human OTP input)
@@ -324,8 +307,8 @@ elytro account create -c <chainId> [-a <name>] [-e <email>] [-l <usd>]
 {
   "alias": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
-  "chainId": 11155420,
+  "chain": "Sepolia",
+  "chainId": 11155111,
   "deployed": false,
   "security": {
     "email": "user@example.com",
@@ -359,8 +342,8 @@ same deploy UserOp. Atomic — if hook install fails, the entire deployment reve
 {
   "alias": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
-  "chainId": 11155420,
+  "chain": "Sepolia",
+  "chainId": 11155111,
   "transactionHash": "0x...",
   "gasCost": "0.0001 ETH",
   "sponsored": true,
@@ -395,8 +378,8 @@ elytro account list [alias|address] [-c <chainId>]
       "active": true,
       "alias": "swift-panda",
       "address": "0x...",
-      "chain": "OP Sepolia",
-      "chainId": 11155420,
+      "chain": "Sepolia",
+      "chainId": 11155111,
       "deployed": true,
       "recovery": false
     }
@@ -419,8 +402,8 @@ Fetches live on-chain data (balance, deployment status). Requires RPC access.
 {
   "alias": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
-  "chainId": 11155420,
+  "chain": "Sepolia",
+  "chainId": 11155111,
   "deployed": true,
   "balance": "0.05 ETH",
   "recovery": false,
@@ -547,8 +530,8 @@ Same pipeline as `send` but stops before signing. Returns the full unsigned User
   "userOp": { "sender": "0x...", "callData": "0x...", "...": "..." },
   "account": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
-  "chainId": 11155420,
+  "chain": "Sepolia",
+  "chainId": 11155111,
   "txType": "ETH Transfer",
   "sponsored": true
 }
@@ -569,8 +552,8 @@ Dry-run with gas breakdown, balance check, and warnings.
   "txType": "ETH Transfer",
   "account": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
-  "chainId": 11155420,
+  "chain": "Sepolia",
+  "chainId": 11155111,
   "transactions": [{ "to": "0x...", "value": "0.1" }],
   "gas": {
     "callGasLimit": "21000",
@@ -607,7 +590,7 @@ elytro query balance [alias|address] --token 0xAddr  # ERC-20 balance
 {
   "account": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
+  "chain": "Sepolia",
   "symbol": "ETH",
   "balance": "0.05"
 }
@@ -619,7 +602,7 @@ elytro query balance [alias|address] --token 0xAddr  # ERC-20 balance
 {
   "account": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
+  "chain": "Sepolia",
   "token": "0x...",
   "symbol": "USDC",
   "decimals": 6,
@@ -641,7 +624,7 @@ Lists all ERC-20 tokens with non-zero balances. Uses Alchemy — requires Alchem
 {
   "account": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
+  "chain": "Sepolia",
   "tokens": [
     { "address": "0x...", "symbol": "USDC", "decimals": 6, "balance": "1000.0" }
   ],
@@ -665,7 +648,7 @@ elytro query tx <hash>
   "from": "0x...",
   "to": "0x...",
   "gasUsed": "21000",
-  "chain": "OP Sepolia"
+  "chain": "Sepolia"
 }
 ```
 
@@ -679,8 +662,8 @@ elytro query chain
 
 ```json
 {
-  "chainId": 11155420,
-  "name": "OP Sepolia",
+  "chainId": 11155111,
+  "name": "Sepolia",
   "nativeCurrency": "ETH",
   "rpcEndpoint": "https://opt-sepolia.g.alchemy.com/v2/***",
   "bundler": "https://api.pimlico.io/v2/.../rpc?apikey=***",
@@ -703,7 +686,7 @@ elytro query address <0xAddress>
 ```json
 {
   "address": "0x...",
-  "chain": "OP Sepolia",
+  "chain": "Sepolia",
   "type": "contract",
   "balance": "1.5 ETH",
   "codeSize": "4096 bytes"
@@ -737,8 +720,8 @@ elytro security status
 {
   "account": "swift-panda",
   "address": "0x...",
-  "chain": "OP Sepolia",
-  "chainId": 11155420,
+  "chain": "Sepolia",
+  "chainId": 11155111,
   "hookInstalled": true,
   "hookAddress": "0x...",
   "capabilities": {
@@ -858,8 +841,8 @@ elytro config show
   "rpcProvider": "Alchemy (user-configured)",
   "bundlerProvider": "Pimlico (user-configured)",
   "alchemyKey": "abc1***xyz9",
-  "currentChain": "OP Sepolia",
-  "chainId": 11155420,
+  "currentChain": "Sepolia",
+  "chainId": 11155111,
   "rpcEndpoint": "https://opt-sepolia.g.alchemy.com/v2/***",
   "bundler": "https://api.pimlico.io/v2/.../rpc?apikey=***"
 }
@@ -950,7 +933,7 @@ This prevents double-installation and makes state inspection trivial.
 elytro init
 
 # Create with security — ALWAYS include --email and --daily-limit
-elytro account create --chain 11155420 --alias agent-primary \
+elytro account create --chain 11155111 --alias agent-primary \
   --email user@example.com --daily-limit 100
 
 # Bind email — INTERACTIVE, requires human OTP input
@@ -1005,9 +988,9 @@ elytro tx send --tx "to:0xAddr,value:0.5"
 ### Pattern 5: Multi-Account Management
 
 ```bash
-elytro account create --chain 11155420 --alias hot-wallet \
+elytro account create --chain 11155111 --alias hot-wallet \
   --email user@example.com --daily-limit 50
-elytro account create --chain 11155420 --alias cold-storage \
+elytro account create --chain 11155111 --alias cold-storage \
   --email user@example.com --daily-limit 500
 # → bind email + activate BOTH accounts before transacting
 
@@ -1197,3 +1180,220 @@ package manager (npm, yarn, pnpm, bun) from the environment.
 No plaintext key files on disk. The vault key lives in macOS Keychain or is injected
 via `ELYTRO_VAULT_SECRET` environment variable. Deleting `~/.elytro/` resets local
 state; on-chain contracts are unaffected.
+
+---
+
+## UX Rules
+
+Detect the active channel from the system prompt or host context at session start.
+Use the matching format consistently.
+
+### Channel: telegram
+
+Telegram supports Inline Buttons. Use them for every confirmation and every list.
+Never ask for text input when a button is sufficient.
+
+Rules:
+
+- every confirmation prompt must include Inline Buttons
+- every account list, token list, tx history list, or selectable detail list must use Inline Buttons
+- use Telegram MarkdownV2 for message text
+- escape MarkdownV2 special characters correctly
+- **never use Markdown tables (`|...|`)** because Telegram renders them badly
+- use labeled lines such as `Alias: value`, `Address: value`, `Gas: value`
+- only request text input when the workflow genuinely requires freeform input, such as OTP entry
+
+**Session start card:**
+
+```text
+🔐 *Elytro Wallet ready*
+
+Wallet: `{alias}` \(`{address_short}`\)
+Network: {chain}
+Security: {hookInstalled ? "✅ Protected" : "⚠️ Not protected"}
+Balance: {balance} ETH
+{updateAvailable ? "⚠️ Update available: `" + latestVersion + "`" : ""}
+```
+
+Buttons: `[Check Balance]` `[Send]` `[Swap]` `[Accounts]`
+
+**Account created card:**
+
+```text
+✅ *Account created*
+
+Alias: `{alias}`
+Address: `{address}`
+Chain: {chain} \({chainId}\)
+Deployed: ❌ Not yet
+Email: {email}
+Daily limit: \${dailyLimitUsd} USD
+
+Next: verify your email to activate 2FA\.
+```
+
+Buttons: `[Verify Email Now]` `[Later]`
+Callback data: `email_bind_{alias}` / `email_bind_skip_{alias}`
+
+**Account activated card:**
+
+```text
+✅ *Account activated*
+
+Alias: `{alias}`
+Address: `{address_short}`
+Chain: {chain}
+Hook: {hookInstalled ? "✅ SecurityHook installed" : "❌ Hook missing"}
+Tx: `{txHash_short}`
+```
+
+**Transaction confirmation card:**
+
+```text
+📤 *Confirm transaction*
+
+From: `{alias}` \(`{address_short}`\)
+To: `{to_short}`
+Amount: {amount_line}
+Gas: {sponsored ? "Sponsored \(free\)" : gasCost}
+Network: {chain}
+```
+
+Buttons: `[✅ Confirm]` `[❌ Cancel]`
+Callback data: `tx_confirm_{nonce}` / `tx_cancel_{nonce}`
+
+**Transaction confirmed card:**
+
+```text
+✅ *Transaction confirmed*
+
+Tx: `{txHash_short}`
+Block: {block}
+Gas: {sponsored ? "Sponsored \(free\)" : gasCost}
+[View on Explorer]({explorerUrl})
+```
+
+**Error card:**
+
+```text
+❌ *Transaction failed*
+
+Reason: {error\.message}
+Code: `{error.code}`
+
+{recovery_hint}
+```
+
+Buttons: `[Retry]` `[Cancel]`
+
+**Account list:**
+
+```text
+🗂 *Your accounts*
+Select an account:
+```
+
+Buttons: one row per account, for example
+`[{alias} ({address_short}) {deployed ? "✅" : "⚠️"}]`
+
+Callback data: `account_select_{alias}`
+
+**Balance card:**
+
+```text
+💰 *Balance - {alias}*
+
+ETH: {eth_balance}
+Network: {chain}
+```
+
+Token buttons: one button per non-zero token, for example
+`[{symbol}: {balance}]`
+
+Callback data: `token_detail_{tokenAddress}`
+
+**Token list:**
+
+```text
+🪙 *Token holdings - {alias}*
+```
+
+Buttons: `[{symbol} - {balance}]`
+Callback data: `token_detail_{tokenAddress}`
+
+**Security status card:**
+
+```text
+🔒 *Security status*
+
+Hook: {hookInstalled ? "✅ Installed" : "❌ Not installed"}
+Email: {emailVerified ? "✅ Verified" : "❌ Not verified"} \({email\_masked}\)
+Daily limit: \${dailyLimitUsd}
+```
+
+Buttons when relevant: `[Setup Security]` `[Change Email]` `[Change Limit]`
+Callback data: `security_setup` / `security_email_change` / `security_limit_change`
+
+**OTP prompt:**
+
+```text
+📧 *Check your email*
+
+A 6\-digit code was sent to {email\_masked}\.
+Reply with the code to verify\.
+```
+
+**Update available card:**
+
+```text
+⚠️ *Update available*
+
+Current: `{currentVersion}`
+Latest: `{latestVersion}`
+```
+
+Buttons: `[✅ Update now]` `[Skip]`
+Callback data: `update_confirm` / `update_skip`
+
+**Swap confirmation card:**
+
+```text
+🔄 *Confirm swap*
+
+From: {amountIn} {symbolIn}
+To: >= {amountOutMin} {symbolOut}
+Route: {route}
+Gas: {sponsored ? "Sponsored \(free\)" : gasCost}
+Network: {chain}
+```
+
+Buttons: `[✅ Confirm swap]` `[❌ Cancel]`
+Callback data: `swap_confirm_{nonce}` / `swap_cancel_{nonce}`
+
+### Channel: default
+
+Use standard Markdown. Human-readable formatting is allowed, but still prefer
+simple labeled blocks over tables for wallet and account summaries because small
+models reproduce labeled blocks more reliably than tables.
+
+Rules:
+
+- confirmations must be explicit
+- tables are allowed but discouraged for account creation, balances, and transaction previews
+- prefer short sections with labeled lines
+- keep output deterministic across repeated runs
+
+Recommended account-created format:
+
+```text
+Account created
+
+Alias: {alias}
+Address: {address}
+Chain: {chain} ({chainId})
+Deployed: No
+Email: {email}
+Daily limit: ${dailyLimitUsd} USD
+
+Next step: run `elytro security email bind {email}` and wait for the user's OTP.
+```
