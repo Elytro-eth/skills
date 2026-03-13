@@ -41,13 +41,13 @@ Add more folders under `defi/` (`defi/<protocol>/SKILL.md`) to extend the pack; 
 
 ```bash
 # Install the whole pack (skills CLI)
-npx skills add Elytro-eth/skills
+npx skills add jayden-sudo/skills
 
 # Focus on the Elytro wallet skill
-npx skills add Elytro-eth/skills --skill elytro
+npx skills add jayden-sudo/skills --skill elytro
 
 # Uniswap planner only
-npx skills add Elytro-eth/skills --skill defi/uniswap
+npx skills add jayden-sudo/skills --skill defi/uniswap
 ```
 
 Clawhub users can add the repo once, then enable whichever folders are needed per workspace. No repackaging required; Clawhub preserves the `<folder>/SKILL.md` layout.

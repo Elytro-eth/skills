@@ -19,7 +19,7 @@ A curated directory of Agent Skills that teach AI wallets how to coordinate Elyt
 Add this skill collection with the [Agent Skills CLI](https://skills.sh):
 
 ```bash
-npx skills add Elytro-eth/skills
+npx skills add jayden-sudo/skills
 ```
 
 (Or install directly from GitHub: `npx skills add https://github.com/jayden-sudo/skills`.)
