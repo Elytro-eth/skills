@@ -16,7 +16,7 @@ metadata:
         - elytro
       node: ">=24.0.0"
     emoji: "🔐"
-    homepage: https://github.com/jayden-sudo/skills
+    homepage: https://github.com/Elytro-eth/skills
     install:
       - id: npm
         kind: npm
@@ -31,7 +31,7 @@ This skill teaches an autonomous agent how to operate the Elytro CLI end-to-end.
 Every command returns structured JSON so agents can plan multi-step workflows,
 parse output deterministically, and handle errors without human intervention.
 
-- Repo: https://github.com/jayden-sudo/Elytro
+- Repo: https://github.com/Elytro-eth/Elytro
 - Required install command: `npm install -g @elytro/cli` (requires Node >= 24)
 
 ---

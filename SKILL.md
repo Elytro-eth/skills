@@ -9,7 +9,7 @@ disable-model-invocation: false
 
 Welcome! The `elytro` CLI prints this URL in `elytro --help` so agents always land on the canonical instructions before touching a wallet. Read this document once, then jump into the sub-skills listed below.
 
-> Raw link surfaced in `elytro --help`: `https://raw.githubusercontent.com/jayden-sudo/skills/main/SKILL.md`
+> Raw link surfaced in `elytro --help`: `https://raw.githubusercontent.com/Elytro-eth/skills/main/SKILL.md`
 
 Need to **swap tokens? Install [`defi/uniswap/SKILL.md`](./defi/uniswap/SKILL.md).**  
 Need to execute another protocol flow? Install that protocol’s folder (e.g., `defi/pendle/SKILL.md`) alongside [`defi/elytro/SKILL.md`](./defi/elytro/SKILL.md).
@@ -41,13 +41,13 @@ Add more folders under `defi/` (`defi/<protocol>/SKILL.md`) to extend the pack; 
 
 ```bash
 # Install the whole pack (skills CLI)
-npx skills add jayden-sudo/skills
+npx skills add Elytro-eth/skills
 
 # Focus on the Elytro wallet skill
-npx skills add jayden-sudo/skills --skill elytro
+npx skills add Elytro-eth/skills --skill elytro
 
 # Uniswap planner only
-npx skills add jayden-sudo/skills --skill defi/uniswap
+npx skills add Elytro-eth/skills --skill defi/uniswap
 ```
 
 Clawhub users can add the repo once, then enable whichever folders are needed per workspace. No repackaging required; Clawhub preserves the `<folder>/SKILL.md` layout.

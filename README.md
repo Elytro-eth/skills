@@ -19,16 +19,16 @@ A curated directory of Agent Skills that teach AI wallets how to coordinate Elyt
 Add this skill collection with the [Agent Skills CLI](https://skills.sh):
 
 ```bash
-npx skills add jayden-sudo/skills
+npx skills add Elytro-eth/skills
 ```
 
-(Or install directly from GitHub: `npx skills add https://github.com/jayden-sudo/skills`.)
+(Or install directly from GitHub: `npx skills add https://github.com/Elytro-eth/skills`.)
 
 ### Clawhub
 
 Clawhub ingests the same `<folder>/SKILL.md` layout, so you can import this repo directly:
 
-1. In the Clawhub app (or CLI) choose **Add skill pack → From Git** and paste `https://github.com/jayden-sudo/skills`.
+1. In the Clawhub app (or CLI) choose **Add skill pack → From Git** and paste `https://github.com/Elytro-eth/skills`.
 2. Clawhub downloads the repo and exposes each folder (`elytro`, `defi`, `defi/elytro`, `defi/uniswap`, etc.) as an installable skill.
 3. Use the imported skills inside your Clawhub workspace just like any other pack (link them to plans, attach to agents, and configure environment variables where needed).
 
