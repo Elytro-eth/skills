@@ -58,6 +58,101 @@ Install: `npm install -g @elytro/cli` (requires Node >= 24)
 
 ---
 
+## Agent Communication Standard
+
+Every response to the user after running an Elytro command should follow a consistent
+structure. The goal is predictability — users should always know where to look for the
+status, the important details, and what happens next. Stick to this format regardless
+of which agent runtime or framework is executing the skill.
+
+### Response Template
+
+```
+<Status Line>      — one sentence: what happened and whether it succeeded
+<Key Details>      — the 2-4 most important fields from the result, as a compact list
+<Context / Link>   — explorer URL or next-step hint (when applicable)
+```
+
+Keep it compact. Agents should not dump raw JSON at the user or narrate every field.
+Pull out what matters and discard the rest.
+
+### Per-Operation Formats
+
+**Transaction sent:**
+
+```
+✅ Sent 0.05 ETH to 0xAbc…1234 on Optimism.
+  Tx: 0xdef…5678
+  Gas: 0.00012 ETH (sponsored)
+  Explorer: https://optimistic.etherscan.io/tx/0xdef…5678
+```
+
+**Transaction simulated:**
+
+```
+🧪 Simulation passed — estimated max gas 0.00015 ETH (sponsored).
+  No warnings. Safe to proceed.
+```
+
+If `warnings` is non-empty, list each warning on its own line prefixed with ⚠️.
+
+**Balance query:**
+
+```
+💰 agent-primary on OP Sepolia: 0.482 ETH
+```
+
+For token balances, append token symbol and contract: `1,200.00 USDC (0xA0b8…)`.
+
+**Account created / activated:**
+
+```
+✅ Account "agent-primary" created on OP Sepolia.
+  Address: 0xAbc…1234
+  Deployed: false — run `account activate` next.
+```
+
+After activation, include `hookInstalled` status and flag any pending security steps.
+
+**Security status:**
+
+```
+🔐 Security status for agent-primary:
+  Hook installed: ✅  |  Email verified: ✅  |  Daily limit: $100.00
+  Ready to transact.
+```
+
+If any check fails, replace ✅ with ❌ and add a one-line remediation hint.
+
+**Errors:**
+
+```
+❌ Transaction failed: Insufficient balance (code -32005).
+  Account holds 0.02 ETH but the transaction requires 0.05 ETH.
+  → Fund the account and retry.
+```
+
+Always include: error description, the code, the cause in plain language, and a
+concrete next step.
+
+### Communication Principles
+
+- **Lead with outcome, not process.** Say "Sent 0.05 ETH" not "I ran `elytro tx send`
+  and received JSON with success true…"
+- **Surface explorer links for every on-chain action.** Transactions, deployments,
+  and activations all return an `explorer` field — always show it.
+- **Translate codes into plain language.** The user doesn't need to know what -32002
+  means; they need to know "the account isn't deployed yet."
+- **Flag security gaps immediately.** If `hookInstalled`, `emailVerified`, or
+  `dailyLimitUsd` is missing/false, call it out before doing anything else —
+  don't bury it in a list.
+- **For multi-step workflows (e.g. setup, batch sends), number the steps** and
+  report each one as it completes so the user can track progress.
+- **Never show raw JSON unless the user explicitly asks for it.** Parse it,
+  extract what matters, present it in the format above.
+
+---
+
 ## Account Lifecycle
 
 ```
