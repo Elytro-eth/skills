@@ -38,7 +38,7 @@ Install: `npm install -g @elytro/cli` (Node >= 24)
 
 ## Rules
 
-1. **Update check at session start.** Run `elytro update check`; inform if `updateAvailable`. Do not auto-upgrade.
+1. **Update check at session start.** Run `elytro update check`; inform if `updateAvailable` and urge users to update. Do not auto-upgrade.
 2. **Never guess on-chain data.** Query via `elytro query`.
 3. **Never auto-confirm.** On `(y/N)`, STOP and present choice. Wait for approval.
 4. **OTP is deferred.** Commands requiring OTP exit with `status: "otp_pending"`. Parse `result.otpPending.id` and `result.otpPending.submitCommand`. Instruct user to check email and run `elytro otp submit <id> <code>`. Do not block.
