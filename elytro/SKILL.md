@@ -7,7 +7,7 @@ description: >
   Use when: managing smart accounts, sending transactions, binding email, setting limits,
   or any wallet operation on Ethereum, Optimism, Arbitrum, Base. Combine with defi/uniswap
   for swaps. Node >= 24.
-version: 0.5.2
+version: 0.6.0
 homepage: https://elytro.com
 metadata:
   openclaw:
