@@ -1,13 +1,11 @@
 ---
 name: elytro
 description: >
-  Elytro — ERC-4337 smart account wallet CLI for AI agents. On-chain 2FA, spending limits,
-  OS keychain vault (macOS/Windows/Linux). Deferred OTP: commands exit with otp_pending;
-  complete with `otp submit <id> <code>`. Send ETH/ERC-20, batch tx, gas sponsorship.
-  Use when: managing smart accounts, sending transactions, binding email, setting limits,
-  or any wallet operation on Ethereum, Optimism, Arbitrum, Base. Combine with defi/uniswap
-  for swaps. Node >= 24.
-version: 0.6.0
+  Elytro smart-account wallet CLI for agents: multi-chain ERC-4337, 2FA email OTP, spending limits.
+  Teaches agents to simulate before send, get user approval on risky steps, and explain outcomes in a
+  fixed, user-friendly format (no raw JSON unless asked). Deferred OTP completed with otp submit.
+  Use for: accounts, transfers, contract calls, email/security setup. Node >= 24.
+version: 0.6.1
 homepage: https://elytro.com
 metadata:
   openclaw:
@@ -28,113 +26,113 @@ metadata:
 
 # Elytro CLI — Agent Skill
 
-Operate the Elytro smart account wallet. Every command returns JSON to stdout. Parse `success` and `result` — never regex free-form text.
+**Purpose:** Operate the Elytro smart account wallet **safely and predictably**.
 
-Install: `npm install -g @elytro/cli` (Node >= 24)
+**Install:** `npm install -g @elytro/cli` (Node ≥ 24)
 
-**Command reference**: [references/commands.md](references/commands.md) — read when needing exact syntax, options, or return shapes.
+**Command reference & risk list:** [references/commands.md](references/commands.md)
 
 ---
 
-## Rules
+## How to read command output
 
-1. **Update check at session start.** Run `elytro update check`; inform if `updateAvailable` and urge users to update. Do not auto-upgrade.
-2. **Never guess on-chain data.** Query via `elytro query`.
-3. **Never auto-confirm.** On `(y/N)`, STOP and present choice. Wait for approval.
-4. **OTP is deferred.** Commands requiring OTP exit with `status: "otp_pending"`. Parse `result.otpPending.id` and `result.otpPending.submitCommand`. Instruct user to check email and run `elytro otp submit <id> <code>`. Do not block.
-5. **Chains**: 1, 10, 42161, 8453, 11155111, 11155420. `value` in ETH. `data` hex with `0x`.
-6. **Deploy before tx.** `account info` → `deployed: true`. Else `account activate`.
-7. **Security required.** Never `tx send` without `hookInstalled` AND `emailVerified` (from `security status`).
-8. **Create with `--email` and `--daily-limit`.** Order: create → activate → email bind → spending-limit.
-9. **Always pass alias/address to `account switch`.** No interactive selector.
-10. **Parse JSON from every command.** stderr = spinners/prompts; stdout = JSON.
+- Prefer the structured payload: **`success`**, then **`result`** (or **`error`** on failure).
+- **To the user:** translate into the fixed phrases in **User-visible outcomes** below. Offer raw JSON only if they ask.
+- On failure, use **`error.message`** and any **`error.data`** hints (e.g. `hint`, supported chains)—rephrase in plain language.
+
+---
+
+## Operating rules
+
+1. **Session start:** `elytro update check` — tell the user if an update exists; do not upgrade without consent.
+2. **On-chain facts:** use `elytro query`; do not assume balances or chain state.
+3. **Risky commands:** require **explicit user OK** before running anything listed in `commands.md` → _Agent: user approval_.
+4. **OTP:** if the result indicates email verification is pending, use the **OTP pending** phrase and stop; user runs `otp submit` with the code when ready (see `commands.md`).
+5. **Chains:** 1, 10, 42161, 8453, 11155111, 11155420 · amounts in **ETH** · calldata hex with `0x`.
+6. **Before normal sends:** account **deployed**, **hook installed**, **email verified** (`security status`). Treat `--no-hook` as exceptional—only with user approval.
+7. **Automation:** pass **account alias/address** for `switch`, `tx simulate`, and `tx send` when multiple accounts exist (avoid interactive pickers).
+8. **Secrets:** never paste vault keys or API keys back into chat.
 
 ---
 
 ## Agent Communication
 
-**Template**: `<Status> — <Key details> — <Explorer/next step>`
+Keep **one line of status**, then **one line of next step** when useful. Same wording every time.
 
-Keep compact. Never dump raw JSON unless asked.
+| Situation                   | What you tell the user                                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Success (generic)**       | **Done —** &lt;plain summary of what changed&gt;. **Next:** &lt;optional one action&gt;                                                                                                                      |
+| **Simulated (before send)** | **Preview —** Estimated max cost: &lt;from CLI&gt;. Sponsored: &lt;yes/no&gt;. Account balance: &lt;…&gt;. **Warnings:** &lt;list each, or “none”&gt;. **Please confirm** you want to send this transaction. |
+| **Transaction confirmed**   | **Sent —** &lt;amount / what&gt; to &lt;short address&gt;. **Tx:** &lt;hash&gt;. **Explorer:** &lt;link if Result had one&gt;                                                                                |
+| **OTP pending**             | **Email verification needed —** We’ve sent a code to &lt;masked email&gt;. **When you have the code:** run &lt;paste submitCommand from result&gt;                                                           |
+| **Blocked (security)**      | **Not ready —** 2FA email or hook setup is incomplete. **Next:** &lt;one concrete elytro command&gt;                                                                                                         |
+| **Failed**                  | **Couldn’t complete —** &lt;reason in plain English&gt;. **Try:** &lt;one fix&gt;                                                                                                                            |
 
 ### Formats
 
-| Operation | Format |
-|-----------|--------|
-| Tx sent | `✅ Sent 0.05 ETH to 0xAbc…1234. Tx: 0xdef… Explorer: <url>` |
-| Simulated | `🧪 Simulation passed — gas 0.00015 ETH. No warnings.` |
-| Balance | `💰 agent-primary: 0.482 ETH` |
-| OTP pending | `🔐 OTP sent to u***@example.com. Run: elytro otp submit <id> <code>` |
-| Error | `❌ <description> (code -32xxx). → <fix>` |
+| Operation   | Format                                                                                                                                                                   |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Tx sent     | `✅ Sent 0.05 ETH to 0xAbc…1234. Tx: 0xdef… Explorer: <url>`                                                                                                             |
+| Simulated   | Short summary from `tx simulate` **result**: include `gas.maxCost`, `sponsored` (yes/no), `balance`, and **every** `warnings[]` line; if no warnings, say so explicitly. |
+| Balance     | `💰 agent-primary: 0.482 ETH`                                                                                                                                            |
+| OTP pending | `🔐 OTP sent to <maskedEmail>. Run: elytro otp submit <id> <code>` (user must paste the code from email).                                                                |
+| Error       | `❌ <description> (code -32xxx). → <fix>` — use `error.data` from stderr when present (`hint`, `supportedChains`, etc.).                                                 |
 
-**Principles**: Lead with outcome. Surface explorer links. Translate codes to plain language. Flag security gaps immediately. Never show raw JSON unless asked.
-
----
-
-## Account Lifecycle
-
-```
-create → activate → email bind + spending-limit → PROTECTED
-```
-
-| State | Verify | Safe to tx? |
-|-------|--------|:-----------:|
-| CREATED | `deployed: false` | No |
-| DEPLOYED | `deployed: true`, `emailVerified: false` | No |
-| PROTECTED | `hookInstalled`, `emailVerified`, `dailyLimitUsd` | **Yes** |
+**Principles**: Lead with outcome. Surface explorer links from `result` when present. Map error codes using `references/commands.md`. Flag security gaps (`hookInstalled`, `emailVerified`, limits) before suggesting sends. Show raw JSON only if the user asks.
 
 ---
 
-## First-Time Setup
+## Account lifecycle (for advice only)
+
+`create` → `activate` → email + spending limit → **protected** (hook + verified email + limit).
+
+| Safe to send? | Human-facing check                                      |
+| :-----------: | ------------------------------------------------------- |
+|      No       | “Account not deployed yet.”                             |
+|      No       | “Account deployed but email not verified for security.” |
+|      Yes      | “Security profile looks ready for sending.”             |
+
+---
+
+## First-time setup
 
 ```bash
 elytro init
-elytro account create --chain 11155420 --alias agent-primary --email u@x.com --daily-limit 100
-elytro account activate agent-primary   # CHECK: hookInstalled MUST be true
-elytro security email bind u@x.com      # → otp_pending; user runs otp submit <id> <code>
-elytro security spending-limit 100      # → otp_pending; user runs otp submit <id> <code>
-elytro security status                  # Verify: hookInstalled, emailVerified, dailyLimitUsd
+elytro account create -c 11155420 -a agent-primary -e u@x.com -l 100
+elytro account activate agent-primary    # confirm with user first (deploy)
+elytro security email bind u@x.com       # then OTP flow
+elytro security spending-limit 100        # may OTP
+elytro security status                   # confirm all green for your policy
 ```
 
-Before `tx send`: (1) deployed, (2) hookInstalled, (3) emailVerified, (4) dailyLimitUsd set, (5) sufficient balance.
+Before recommending **send:** confirm deployed + security status the user expects + enough balance.
 
 ---
 
-## Workflow Patterns
+## Workflows
 
-**Simulate → Send**
-```bash
-elytro tx simulate --tx "to:0xAddr,value:0.5"   # parse warnings
-elytro tx send --tx "to:0xAddr,value:0.5"
-```
+**Every send**
+
+1. `tx simulate` — same account, same `--tx` lines, same sponsor flags as the planned send.
+2. Reply using **Preview —** row above; wait for **explicit yes**.
+3. `tx send` with the same arguments.
+
+**Batch:** same number and order of `--tx` on simulate and send.
+
+**Swaps / contract calls:** obtain calldata off-chain, then same simulate → confirm → send.
 
 **Deferred OTP** (email bind, spending-limit, tx send when limit exceeded, 2fa uninstall)
+
 ```bash
 elytro security email bind u@x.com
 # Parse result.otpPending.id, result.otpPending.submitCommand
 # User checks email → elytro otp submit <id> <code>
 ```
 
-**Batch**
-```bash
-elytro tx send --tx "to:0xA,value:0.01" --tx "to:0xB,value:0.02"
-```
-
-**Token swap** (with defi/uniswap): Get calldata from uniswap → `tx simulate` → `tx send`.
-
 ---
 
-## Error Recovery
+## When something goes wrong
 
-| Error | Fix |
-|-------|-----|
-| Wallet not initialized | `elytro init` |
-| Keyring locked / Vault key not found | Check OS credential store |
-| Account not deployed | `elytro account activate` |
-| Insufficient balance | Fund account |
-| `hookInstalled: false` | `elytro security 2fa install` |
-| Chain N not supported | Use valid chain ID from error |
-| Alias already taken | Choose different alias |
-| Challenge does not belong to session | Same account for `otp submit`; re-run original if expired |
-| Unknown OTP id | `otp list`; re-run original command |
-| AA21 in error | Balance or nonce issue; check simulation |
+Use the human’s language first; see **Error recovery (human)** in [references/commands.md](references/commands.md) for uniform **Try:** lines.
+
+---
